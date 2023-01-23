@@ -22,76 +22,34 @@ This modules makes the construction of geometry a little easier
 """
 
 from __future__ import with_statement
-from functools import wraps
-import warnings
-import operator
+
 import math
+import operator
+import warnings
+from functools import wraps
 
 from OCC.Core.BRep import BRep_Tool
 from OCC.Core.BRepAdaptor import BRepAdaptor_Curve
+from OCC.Core.BRepBuilderAPI import (BRepBuilderAPI_FindPlane, BRepBuilderAPI_MakeEdge, BRepBuilderAPI_MakeEdge2d,
+                                     BRepBuilderAPI_MakeFace, BRepBuilderAPI_MakePolygon, BRepBuilderAPI_MakeShell,
+                                     BRepBuilderAPI_MakeSolid, BRepBuilderAPI_MakeVertex, BRepBuilderAPI_MakeWire,
+                                     BRepBuilderAPI_Sewing, BRepBuilderAPI_Transform)
 from OCC.Core.BRepOffset import BRepOffset_Skin
+from OCC.Core.BRepOffsetAPI import BRepOffsetAPI_MakeEvolved
+from OCC.Core.BRepPrimAPI import BRepPrimAPI_MakeBox, BRepPrimAPI_MakePrism
 from OCC.Core.Geom import Geom_TrimmedCurve
+from OCC.Core.GeomAbs import (GeomAbs_Arc, GeomAbs_C0, GeomAbs_C1, GeomAbs_C2, GeomAbs_Intersection, GeomAbs_Tangent)
 from OCC.Core.GeomConvert import GeomConvert_ApproxCurve
 from OCC.Core.GeomLProp import GeomLProp_SLProps
-from OCC.Core.BRepBuilderAPI import (
-    BRepBuilderAPI_MakeFace,
-    BRepBuilderAPI_Transform,
-    BRepBuilderAPI_Sewing,
-    BRepBuilderAPI_MakePolygon,
-    BRepBuilderAPI_MakeWire,
-    BRepBuilderAPI_MakeSolid,
-    BRepBuilderAPI_MakeShell,
-    BRepBuilderAPI_MakeEdge2d,
-    BRepBuilderAPI_MakeEdge,
-    BRepBuilderAPI_MakeVertex,
-    BRepBuilderAPI_FindPlane,
-)
-from OCC.Core.BRepPrimAPI import BRepPrimAPI_MakeBox, BRepPrimAPI_MakePrism
-from OCC.Core.BRepOffsetAPI import BRepOffsetAPI_MakeEvolved
-from OCC.Core.GeomAbs import (
-    GeomAbs_Arc,
-    GeomAbs_C2,
-    GeomAbs_C0,
-    GeomAbs_Tangent,
-    GeomAbs_Intersection,
-    GeomAbs_G1,
-    GeomAbs_G2,
-    GeomAbs_C1,
-)
+from OCC.Core.TColgp import TColgp_HArray1OfPnt, TColgp_SequenceOfVec
 from OCC.Core.TopAbs import TopAbs_REVERSED
-from OCC.Core.TopoDS import (
-    TopoDS_Wire,
-    TopoDS_Solid,
-    TopoDS_Vertex,
-    TopoDS_Shape,
-    TopoDS_Builder,
-    TopoDS_Compound,
-)
-from OCC.Core.TColgp import TColgp_SequenceOfVec, TColgp_HArray1OfPnt
-from OCC.Core.gp import (
-    gp_Vec,
-    gp_Pnt,
-    gp_Dir,
-    gp_Trsf,
-    gp_Ax1,
-    gp_Quaternion,
-    gp_Circ,
-    gp_Pln,
-)
+from OCC.Core.TopoDS import (TopoDS_Builder, TopoDS_Compound, TopoDS_Shape, TopoDS_Vertex, TopoDS_Wire)
+from OCC.Core.gp import (gp_Ax1, gp_Circ, gp_Dir, gp_Pln, gp_Pnt, gp_Quaternion, gp_Trsf, gp_Vec)
 
-from OCCUtils.Common import (
-    TOLERANCE,
-    assert_isdone,
-    to_tcol_,
-    to_adaptor_3d,
-    vertex2pnt,
-    smooth_pnts,
-    points_to_bspline,
-    project_point_on_curve,
-)
-from OCCUtils.types_lut import ShapeToTopology
-from OCCUtils.Topology import Topo
-
+from ..OCCUtils.Common import (TOLERANCE, assert_isdone, points_to_bspline, project_point_on_curve, smooth_pnts,
+                               to_adaptor_3d, to_tcol_, vertex2pnt)
+from ..OCCUtils.Topology import Topo
+from ..OCCUtils.types_lut import ShapeToTopology
 
 EPSILON = TOLERANCE = 1e-6
 ST = ShapeToTopology()
@@ -587,7 +545,7 @@ def make_n_sections(edges):
 
 
 def make_coons(edges):
-    from OCC.GeomFill import GeomFill_BSplineCurves, GeomFill_StretchStyle
+    from OCC.Core.GeomFill import GeomFill_BSplineCurves, GeomFill_StretchStyle
 
     if len(edges) == 4:
         spl1, spl2, spl3, spl4 = edges
@@ -852,7 +810,7 @@ def face_normal(face):
 
 
 def face_from_plane(_geom_plane, lowerLimit=-1000, upperLimit=1000):
-    from OCC.Geom import Geom_RectangularTrimmedSurface
+    from OCC.Core.Geom import Geom_RectangularTrimmedSurface
 
     _trim_plane = make_face(
         Geom_RectangularTrimmedSurface(
@@ -878,7 +836,7 @@ def fit_plane_through_face_vertices(_face):
     :param _face:   OCC.KBE.face.Face instance
     :return:        Geom_Plane
     """
-    from OCC.GeomPlate import GeomPlate_BuildAveragePlane
+    from OCC.Core.GeomPlate import GeomPlate_BuildAveragePlane
 
     uvs_from_vertices = [
         _face.project_vertex(vertex2pnt(i)) for i in Topo(_face).vertices()
@@ -903,7 +861,7 @@ def project_edge_onto_plane(edg, plane):
     :param plane:   Geom_Plane
     :return:        TopoDS_Edge projected on the plane
     """
-    from OCC.GeomProjLib import geomprojlib_ProjectOnPlane
+    from OCC.Core.GeomProjLib import geomprojlib_ProjectOnPlane
 
     proj = geomprojlib_ProjectOnPlane(
         edg.adaptor.Curve().Curve(), plane, plane.Axis().Direction(), 1
