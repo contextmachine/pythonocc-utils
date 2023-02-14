@@ -23,14 +23,13 @@ from itertools import chain
 from OCC.Display.SimpleGui import init_display
 
 sys.path.append('..')
-from OCCUtils.Common import points_to_bspline
-from OCCUtils.Construct import gp_Pnt, make_edge, make_n_sided, make_vertex
+from mmcore.addons.mmocc.Common import points_to_bspline
+from mmcore.addons.mmocc.OCCUtils.Construct import gp_Pnt, make_edge, make_n_sided, make_vertex
 
 display, start_display, add_menu, add_function_to_menu = init_display()
 
 
 def n_sided_patch():
-
     # left
     pts1 = (gp_Pnt(0, 0, 0.0),
             gp_Pnt(0, 1, 0.3),

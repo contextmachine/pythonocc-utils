@@ -24,31 +24,32 @@
 from __future__ import print_function
 
 import os
-import types
 import sys
 import time
+import types
 
-from OCC.Core.gp import gp_Pnt
-from OCC.Core.BRepAdaptor import BRepAdaptor_Curve
-from OCC.Core.BRep import BRep_Tool
-from OCC.Core.ShapeAnalysis import ShapeAnalysis_Surface
-from OCC.Core.GeomLProp import GeomLProp_SLProps
-from OCC.Core.BRepFill import BRepFill_CurveConstraint
-from OCC.Core.GeomPlate import (GeomPlate_MakeApprox,
-                           GeomPlate_BuildPlateSurface,
-                           GeomPlate_PointConstraint)
-from OCC.Core.IGESControl import IGESControl_Reader
-from OCC.Core.IFSelect import (IFSelect_RetDone,
-                          IFSelect_ItemsByEntity)
-from OCC.Display.SimpleGui import init_display
-from OCC.Core.TopoDS import TopoDS_Compound
 from OCC.Core.BRep import BRep_Builder
+from OCC.Core.BRep import BRep_Tool
+from OCC.Core.BRepAdaptor import BRepAdaptor_Curve
+from OCC.Core.BRepFill import BRepFill_CurveConstraint
+from OCC.Core.GeomLProp import GeomLProp_SLProps
+from OCC.Core.GeomPlate import (GeomPlate_MakeApprox,
+                                GeomPlate_BuildPlateSurface,
+                                GeomPlate_PointConstraint)
+from OCC.Core.IFSelect import (IFSelect_RetDone,
+                               IFSelect_ItemsByEntity)
+from OCC.Core.IGESControl import IGESControl_Reader
+from OCC.Core.ShapeAnalysis import ShapeAnalysis_Surface
+from OCC.Core.TopoDS import TopoDS_Compound
+from OCC.Core.gp import gp_Pnt
+from OCC.Display.SimpleGui import init_display
+
 display, start_display, add_menu, add_function_to_menu = init_display()
 
 
-from OCCUtils.Construct import (make_closed_polygon, make_n_sided,
-                                make_vertex, make_face)
-from OCCUtils.Topology import WireExplorer, Topo
+from mmcore.addons.mmocc.OCCUtils.Construct import (make_closed_polygon, make_n_sided,
+                                                    make_vertex, make_face)
+from mmcore.addons.mmocc.OCCUtils.Topology import WireExplorer, Topo
 
 try:
     from scipy import arange
