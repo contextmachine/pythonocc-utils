@@ -56,7 +56,7 @@ try:
     from scipy.optimize import fsolve
     HAVE_SCIPY = True
 except ImportError:
-    print('scipy not installed, will not be able to run the geomplate example')
+    #print('scipy not installed, will not be able to run the geomplate example')
     HAVE_SCIPY = False
 
 
@@ -93,18 +93,18 @@ class IGESImporter(object):
                 elif nbr == 1 and self.nbs == 1:
                     aResShape = aReader.Shape(1)
                     if aResShape.IsNull():
-                        print("At least one shape in IGES cannot be transferred")
+                        #print("At least one shape in IGES cannot be transferred")
                     self._shapes.append(aResShape)
                 else:
                     for i in range(1, self.nbs+1):
                         aShape = aReader.Shape(i)
                         if aShape.IsNull():
-                            print("At least one shape in STEP cannot be transferred")
+                            #print("At least one shape in STEP cannot be transferred")
                         else:
                             self._shapes.append(aShape)
             return True
         else:
-            print("Error: can't read file %s" % self._filename)
+            #print("Error: can't read file %s" % self._filename)
             return False
         return False
 
@@ -204,7 +204,7 @@ def uv_from_projected_point_on_face(face, pt):
     srf = BRep_Tool().Surface(face)
     sas = ShapeAnalysis_Surface(srf)
     uv = sas.ValueOfUV(pt, 1e-2)
-    print('distance', sas.Value(uv).Distance(pt))
+    #print('distance', sas.Value(uv).Distance(pt))
     return uv.Coord()
 
 
@@ -297,22 +297,22 @@ def build_curve_network(event=None):
     '''
     mimic the curve network surfacing command from rhino
     '''
-    print('Importing IGES file...', end='')
+    #print('Importing IGES file...', end='')
     iges = IGESImporter('./curve_geom_plate.igs')
     iges.read_file()
     iges_cpd = iges.get_compound()
-    print('done.')
+    #print('done.')
 
-    print('Building geomplate...', end='')
+    #print('Building geomplate...', end='')
     topo = Topo(iges_cpd)
     edges_list = list(topo.edges())
     face = build_geom_plate(edges_list)
-    print('done.')
+    #print('done.')
     display.EraseAll()
     display.DisplayShape(edges_list)
     display.DisplayShape(face)
     display.FitAll()
-    print('Cutting out of edges...')
+    #print('Cutting out of edges...')
     # Make a wire from outer edges
     # _edges = [edges_list[2], edges_list[3], edges_list[4], edges_list[5]]
     # outer_wire = make_wire(_edges)
